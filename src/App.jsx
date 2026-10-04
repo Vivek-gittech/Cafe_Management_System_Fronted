@@ -8,7 +8,7 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import CustomerDashboard from './pages/CustomerDashabord.jsx'
 import Chef from './pages/ChefOrderUpdate.jsx'
-import Admin from './pages/Admin/AdminDashboard'
+import Admin from './pages/Admin/AdminDashBoard'
 import Staff from './pages/Admin/Staff.jsx'
 import CustomerManagement from './pages/Admin/Customer.jsx'
 import AdminMenu from './pages/Admin/AddMenu'
@@ -32,7 +32,7 @@ export default function App() {
             <Route path="/Register" element={<Register/>}/>
             <Route path="/CustomerDashboard" element={<CustomerDashboard/>}/>
             <Route path="/Chef" element={<Chef/>}/>
-            <Route path="/Admin/DashBoard" element={<Admin/>}/>
+            <Route path="/Admin/Dashboard" element={<Admin/>}/>
             <Route path="/Admin/Staff" element={<Staff/>}/>
             <Route path="/Admin/Customer" element={<CustomerManagement/>}/>
             <Route path="/Admin/Menu" element={<AdminMenu/>}/>
