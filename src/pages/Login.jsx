@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config/api';
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     identifier: '',
@@ -10,7 +12,6 @@ const LoginForm = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  // --- Role & Special Code State ---
   const [showAdminVerify, setShowAdminVerify] = useState(false);
   const [adminKey, setAdminKey] = useState('');
   const [tempAuthData, setTempAuthData] = useState(null);
@@ -24,7 +25,6 @@ const LoginForm = () => {
     });
   };
 
-  // --- Handle Login ---
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -44,16 +44,13 @@ const LoginForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Safely check both 'Role' and 'role'
         const userRole = (data.Role || data.role || 'CUSTOMER').toUpperCase();
 
         if (userRole === 'ADMIN') {
-          // Trigger the Special Code Modal for Admins
           setTempAuthData(data);
           setShowAdminVerify(true);
           setIsLoading(false);
         } else {
-          // Standard Customer Path
           finalizeLogin(data, '/CustomerDashboard');
         }
       } else {
@@ -75,7 +72,6 @@ const LoginForm = () => {
     }
   };
 
-  // --- Finalize Login ---
   const finalizeLogin = (data, redirectPath) => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('name', data.name || data.email);
@@ -84,37 +80,23 @@ const LoginForm = () => {
     const roleToSave = data.Role || data.role || 'CUSTOMER';
     localStorage.setItem('role', roleToSave);
 
-    // Force refresh
-    window.location.href = redirectPath;
+    // FIX: Using React Router client navigation
+    navigate(redirectPath);
   };
 
-  // --- Animation Variants ---
   const containerVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.98,
-      y: 10
-    },
+    hidden: { opacity: 0, scale: 0.98, y: 10 },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.12
-      }
+      transition: { duration: 0.6, staggerChildren: 0.12 }
     }
   };
 
   const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 15
-    },
-    visible: {
-      opacity: 1,
-      y: 0
-    }
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0 }
   };
 
   return (
@@ -126,10 +108,7 @@ const LoginForm = () => {
           scale: [1, 1.1, 1],
           opacity: [0.1, 0.15, 0.1]
         }}
-        transition={{
-          duration: 8,
-          repeat: Infinity
-        }}
+        transition={{ duration: 8, repeat: Infinity }}
         className="fixed top-[-10%] right-[-10%] w-[45%] h-[45%] bg-[#ec7f13] blur-[120px] rounded-full pointer-events-none"
       />
 
@@ -172,6 +151,7 @@ const LoginForm = () => {
 
               <div className="flex gap-3">
                 <button
+                  type="button"
                   onClick={() => setShowAdminVerify(false)}
                   className="flex-1 h-12 rounded-xl font-bold text-zinc-500 hover:bg-zinc-100 transition-colors"
                 >
@@ -179,6 +159,7 @@ const LoginForm = () => {
                 </button>
 
                 <button
+                  type="button"
                   onClick={verifyAdminCode}
                   className="flex-1 h-12 bg-[#ec7f13] text-white rounded-xl font-bold hover:brightness-110 transition-all"
                 >
@@ -200,58 +181,42 @@ const LoginForm = () => {
 
         {/* Left Side Decor */}
         <div className="hidden lg:flex w-[45%] relative overflow-hidden">
-
           <img
             src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1200"
             className="absolute inset-0 w-full h-full object-cover"
             alt="Cafe"
           />
-
           <div className="absolute inset-0 bg-gradient-to-t from-[#1b170d] to-transparent opacity-90" />
-
           <div className="relative z-10 p-12 mt-auto text-white">
             <h2 className="text-4xl font-black mb-4 tracking-tight">
               System <br />
               Authentication
             </h2>
-
             <p className="text-zinc-300 text-sm font-medium">
               Verify your identity to manage the brew.
             </p>
           </div>
-
         </div>
 
         {/* Right Side - Form */}
         <div className="w-full lg:w-[55%] p-10 md:p-20 flex flex-col justify-center">
 
-          <motion.div
-            variants={itemVariants}
-            className="mb-10"
-          >
+          <motion.div variants={itemVariants} className="mb-10">
             <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
               Login
             </h1>
-
             <p className="text-zinc-500 text-sm mt-2 font-medium">
               Enter your credentials to access your account.
             </p>
           </motion.div>
 
-          <form
-            className="space-y-7"
-            onSubmit={handleLogin}
-          >
+          <form className="space-y-7" onSubmit={handleLogin}>
 
             {/* Username / Email */}
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col gap-2.5"
-            >
+            <motion.div variants={itemVariants} className="flex flex-col gap-2.5">
               <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[#ec7f13] ml-1">
                 Username or Email
               </label>
-
               <input
                 id="identifier"
                 type="text"
@@ -263,11 +228,7 @@ const LoginForm = () => {
             </motion.div>
 
             {/* Password */}
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col gap-2.5"
-            >
-
+            <motion.div variants={itemVariants} className="flex flex-col gap-2.5">
               <div className="flex justify-between items-center ml-1">
                 <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[#ec7f13]">
                   Secret Password
@@ -275,7 +236,6 @@ const LoginForm = () => {
               </div>
 
               <div className="relative">
-
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -284,7 +244,6 @@ const LoginForm = () => {
                   onChange={handleChange}
                   required
                 />
-
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -294,9 +253,7 @@ const LoginForm = () => {
                     {showPassword ? 'visibility' : 'visibility_off'}
                   </span>
                 </button>
-
               </div>
-
             </motion.div>
 
             {/* Login Button */}
@@ -314,16 +271,13 @@ const LoginForm = () => {
               </button>
             </motion.div>
 
-            {/* REGISTER OPTION - ADDED */}
-            <motion.div
-              variants={itemVariants}
-              className="text-center mt-6"
-            >
+            {/* Register Option */}
+            <motion.div variants={itemVariants} className="text-center mt-6">
               <p className="text-sm text-zinc-500">
                 Don't have an account?{" "}
                 <button
                   type="button"
-                  onClick={() => (window.location.href = '/Register')}
+                  onClick={() => navigate('/register')}
                   className="font-black text-[#ec7f13] hover:underline"
                 >
                   Register

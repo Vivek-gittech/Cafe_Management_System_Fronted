@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {API_BASE_URL} from '../config/api';
+import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Updated to match your Java Backend Fields
+
   const [formData, setFormData] = useState({ 
     name: '', 
-    username: '', // This will store the email address
+    username: '', 
     password: '', 
     city: '' 
   });
@@ -23,7 +24,8 @@ const RegisterForm = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('API_BASE_URL/Customer/Post', {
+      // FIX: Changed single quotes to template literal backticks ``
+      const response = await fetch(`${API_BASE_URL}/Customer/Post`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,13 +38,13 @@ const RegisterForm = () => {
       if (response.ok) {
         console.log("Success:", data);
         alert("Registration Successful!");
-        // window.location.href = '/login';
+        navigate('/login');
       } else {
         alert(`Registration failed: ${data.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Network error:", error);
-      alert("Could not connect to the server. Check if your Spring Boot app is running on port 8080.");
+      alert("Could not connect to the server. Check if your Spring Boot app is running.");
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +125,7 @@ const RegisterForm = () => {
               />
             </motion.div>
 
-            {/* EMAIL (as username) */}
+            {/* EMAIL */}
             <motion.div variants={itemVariants} className="flex flex-col gap-2">
               <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[#ec7f13] ml-1">Email Address</label>
               <input
@@ -193,7 +195,14 @@ const RegisterForm = () => {
           </form>
 
           <motion.p variants={itemVariants} className="mt-8 text-center text-sm text-zinc-500 font-medium">
-            Already a member? <a href="/login" className="text-[#ec7f13] font-black hover:underline underline-offset-4 ml-1">Sign In</a>
+            Already a member?{' '}
+            <button 
+              type="button" 
+              onClick={() => navigate('/login')} 
+              className="text-[#ec7f13] font-black hover:underline underline-offset-4 ml-1"
+            >
+              Sign In
+            </button>
           </motion.p>
         </div>
       </motion.div>
