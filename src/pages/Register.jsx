@@ -13,7 +13,7 @@ const RegisterForm = () => {
     name: '', 
     email: '', 
     password: '', 
-    role_id: 2 // Default Role ID (e.g., 2 = Customer, 1 = Admin)
+    role_id: 1 // Default Role ID (e.g., 2 = Customer, 1 = Admin)
   });
 
   const handleChange = (e) => {
