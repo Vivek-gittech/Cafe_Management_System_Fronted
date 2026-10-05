@@ -8,15 +8,20 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Form payload matching the Users table schema
   const [formData, setFormData] = useState({ 
     name: '', 
-    username: '', 
+    email: '', 
     password: '', 
-    city: '' 
+    role_id: 2 // Default Role ID (e.g., 2 = Customer, 1 = Admin)
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ 
+      ...formData, 
+      [name]: name === 'role_id' ? parseInt(value, 10) : value 
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -24,8 +29,7 @@ const RegisterForm = () => {
     setIsLoading(true);
 
     try {
-      // FIX: Changed single quotes to template literal backticks ``
-      const response = await fetch(`${API_BASE_URL}/Customer/Post`, {
+      const response = await fetch(`${API_BASE_URL}/User/Post`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +48,7 @@ const RegisterForm = () => {
       }
     } catch (error) {
       console.error("Network error:", error);
-      alert("Could not connect to the server. Check if your Spring Boot app is running.");
+      alert("Could not connect to the server. Check if your backend is running.");
     } finally {
       setIsLoading(false);
     }
@@ -107,12 +111,12 @@ const RegisterForm = () => {
           
           <motion.div variants={itemVariants} className="mb-8">
             <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">Register</h1>
-            <p className="text-zinc-500 text-sm mt-2 font-medium">Create your business account below.</p>
+            <p className="text-zinc-500 text-sm mt-2 font-medium">Create your user account below.</p>
           </motion.div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
             
-            {/* NAME */}
+            {/* FULL NAME */}
             <motion.div variants={itemVariants} className="flex flex-col gap-2">
               <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[#ec7f13] ml-1">Full Name</label>
               <input
@@ -129,22 +133,9 @@ const RegisterForm = () => {
             <motion.div variants={itemVariants} className="flex flex-col gap-2">
               <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[#ec7f13] ml-1">Email Address</label>
               <input
-                name="username"
+                name="email"
                 type="email"
                 placeholder="name@company.com"
-                className="w-full h-14 pl-6 bg-zinc-50 dark:bg-zinc-800/40 border-2 border-transparent focus:border-[#ec7f13]/30 focus:bg-white dark:focus:bg-zinc-800 rounded-2xl outline-none transition-all duration-300 text-sm font-semibold"
-                onChange={handleChange}
-                required
-              />
-            </motion.div>
-
-            {/* CITY */}
-            <motion.div variants={itemVariants} className="flex flex-col gap-2">
-              <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[#ec7f13] ml-1">City</label>
-              <input
-                name="city"
-                type="text"
-                placeholder="e.g. New York"
                 className="w-full h-14 pl-6 bg-zinc-50 dark:bg-zinc-800/40 border-2 border-transparent focus:border-[#ec7f13]/30 focus:bg-white dark:focus:bg-zinc-800 rounded-2xl outline-none transition-all duration-300 text-sm font-semibold"
                 onChange={handleChange}
                 required
@@ -173,6 +164,21 @@ const RegisterForm = () => {
                   </span>
                 </button>
               </div>
+            </motion.div>
+
+            {/* ROLE SELECTION */}
+            <motion.div variants={itemVariants} className="flex flex-col gap-2">
+              <label className="text-[11px] font-black uppercase tracking-[0.15em] text-[#ec7f13] ml-1">Account Role</label>
+              <select
+                name="role_id"
+                value={formData.role_id}
+                onChange={handleChange}
+                className="w-full h-14 px-6 bg-zinc-50 dark:bg-zinc-800/40 border-2 border-transparent focus:border-[#ec7f13]/30 focus:bg-white dark:focus:bg-zinc-800 rounded-2xl outline-none transition-all duration-300 text-sm font-semibold text-zinc-700 dark:text-zinc-200"
+              >
+                <option value={2}>Customer</option>
+                <option value={1}>Admin</option>
+                <option value={3}>Staff / Chef</option>
+              </select>
             </motion.div>
 
             {/* SUBMIT BUTTON */}
